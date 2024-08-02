@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,9 @@ public class Product {
     private String productName;
 
     @Column
+    private Long quantity;
+
+    @Column
     private String characteristic;
 
     @Column
@@ -37,6 +41,12 @@ public class Product {
 
     @Column
     private String image;
+
+    @Column
+    private LocalDateTime plantingDate;
+
+    @Column
+    private LocalDateTime harvestDate;
 
     @ManyToOne
     @JoinColumn(name = "supplier_id", nullable = false)

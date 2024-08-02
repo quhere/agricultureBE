@@ -31,6 +31,9 @@ public class DistributorSeller {
     @Column(nullable = false)
     private Long quantity;
 
+    @Column
+    private LocalDateTime orderedDate;
+
     @Column(nullable = true)
     private LocalDateTime sentDate;
 

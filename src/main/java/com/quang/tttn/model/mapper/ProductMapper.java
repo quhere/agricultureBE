@@ -13,11 +13,14 @@ public class ProductMapper {
         return ProductResponse.builder()
                 .productId(product.getProductId())
                 .productName(product.getProductName())
+                .quantity(product.getQuantity())
                 .characteristic(product.getCharacteristic())
                 .seed(product.getSeed())
                 .cook(product.getCook())
                 .note(product.getNote())
                 .image(product.getImage())
+                .plantingDate(product.getPlantingDate())
+                .harvestDate(product.getHarvestDate())
                 .supplierId(product.getSupplier().getSupplierId())
                 .build();
     }

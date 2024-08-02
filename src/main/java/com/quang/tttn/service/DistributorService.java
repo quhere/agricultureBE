@@ -27,4 +27,8 @@ public class DistributorService {
     public void deleteDistributor(Long id) {
         distributorRepository.deleteById(id);
     }
+
+    public List<Distributor> findAllDistributorInProductDistributors() {
+        return distributorRepository.findAllDistributorsWithProductDistributors();
+    }
 }

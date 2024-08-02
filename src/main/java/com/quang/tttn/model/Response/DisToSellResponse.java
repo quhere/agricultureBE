@@ -1,7 +1,6 @@
 package com.quang.tttn.model.Response;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,15 +9,15 @@ import java.time.LocalDateTime;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class SupToDisResponse {
+public class DisToSellResponse {
     private Long id;
+    private Long distributorWarehouseId;
     private ProductResponse product;
-    private Long distributorId;
+    private Long sellerId;
     private Long quantity;
     private LocalDateTime orderedDate;
     private LocalDateTime sentDate;
     private LocalDateTime receivedDate;
     private String status;
-    private Long warehouseId;
+    private Long sellerWarehouseId;
 }

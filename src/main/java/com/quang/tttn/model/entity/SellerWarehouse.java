@@ -25,11 +25,14 @@ public class SellerWarehouse {
 
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
+    @ToString.Exclude
     private Seller seller;
 
     @OneToOne(mappedBy = "sellerWarehouse", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private ProductSeller productSeller;
 
     @OneToOne(mappedBy = "sellerWarehouse", cascade = CascadeType.ALL)
+    @ToString.Exclude
     private DistributorSeller distributorSeller;
 }

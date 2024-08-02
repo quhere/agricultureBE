@@ -35,4 +35,13 @@ public class ProductDistributorService {
                 distributorId
         );
     }
+
+    public ProductDistributor findByDistributorWarehouseId(Long distributorWarehouseId) {
+        return productDistributorRepository.findByDistributorWarehouse_WarehouseId(distributorWarehouseId);
+    }
+
+    public List<ProductDistributor> findBySupplierId(Long supplierId) {
+        return productDistributorRepository
+                .findAllByProductSupplierId(supplierId);
+    }
 }

@@ -34,6 +34,9 @@ public class Distributor {
     @Column
     private String fax;
 
+    @Column
+    private Boolean status;
+
     @OneToMany(mappedBy = "distributor", cascade = CascadeType.ALL)
     @ToString.Exclude
     private List<DistributorWarehouse> warehouses = new ArrayList<>();

@@ -34,6 +34,9 @@ public class Seller {
     @Column
     private String fax;
 
+    @Column
+    private Boolean status;
+
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<SellerWarehouse> warehouses = new ArrayList<>();
 

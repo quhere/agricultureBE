@@ -1,10 +1,7 @@
 package com.quang.tttn.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
@@ -26,11 +23,16 @@ public class ProductDistributor {
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
+    @ToString.Exclude
     private Product product;
 
     @ManyToOne
     @JoinColumn(name = "distributor_id", nullable = false)
+    @ToString.Exclude
     private Distributor distributor;
+
+    @Column
+    private LocalDateTime orderedDate;
 
     @Column(nullable = true)
     private LocalDateTime sentDate;
@@ -46,5 +48,6 @@ public class ProductDistributor {
 
     @OneToOne
     @JoinColumn(name = "distributor_warehouse_id", nullable = true)
+    @ToString.Exclude
     private DistributorWarehouse distributorWarehouse;
 }
