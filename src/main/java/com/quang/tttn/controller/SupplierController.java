@@ -1,15 +1,17 @@
 package com.quang.tttn.controller;
 
-import com.google.zxing.WriterException;
 import com.quang.tttn.model.Response.DistributorResponse;
+import com.quang.tttn.model.Response.ProductResponse;
 import com.quang.tttn.model.Response.SupToDisResponse;
 import com.quang.tttn.model.Response.SupplierResponse;
 import com.quang.tttn.model.entity.*;
 import com.quang.tttn.model.mapper.DistributorMapper;
+import com.quang.tttn.model.mapper.ProductMapper;
 import com.quang.tttn.model.mapper.SupToDisMapper;
 import com.quang.tttn.model.mapper.SupplierMapper;
 import com.quang.tttn.model.request.SupToDisRequest;
 import com.quang.tttn.model.request.SupplierRequest;
+import com.quang.tttn.repository.ProductRepository;
 import com.quang.tttn.service.*;
 import com.quang.tttn.utils.QRCodeGenerator;
 import lombok.SneakyThrows;
@@ -17,11 +19,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/suppliers")
@@ -43,6 +43,10 @@ public class SupplierController {
     private DistributorWarehouseService distributorWarehouseService;
     @Autowired
     private DistributorMapper distributorMapper;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private ProductMapper productMapper;
 
     @GetMapping
     public List<SupplierResponse> getAllSuppliers() {
@@ -76,9 +80,12 @@ public class SupplierController {
                 .phoneNumber(request.getPhoneNumber())
                 .address(request.getAddress())
                 .fax(request.getFax())
+                .status(true)
+                .role("supplier")
+                .avtUrl("https://quangcaonhat.com/wp-content/uploads/2022/03/z2233894235295_36a2ac275a225d3108708d38b16764a1-768x576.jpg")
                 .build();
 
-//        System.out.println(supplier);
+        System.out.println(supplier);
         return supplierMapper.toResponse(supplierService.save(supplier));
     }
 
@@ -114,7 +121,7 @@ public class SupplierController {
             productDistributor.setDistributorWarehouse(savedWarehouse);
 
             ProductDistributor transaction = productDistributorService.save(productDistributor);
-            QRCodeGenerator.generateQRCode(transaction);
+            QRCodeGenerator.supplierSend(transaction);
 
             return ResponseEntity.ok(supToDisMapper.toSupToDisResponse(transaction));
         }
@@ -135,7 +142,7 @@ public class SupplierController {
             productDistributor1.setDistributorWarehouse(savedWarehouse);
 
             ProductDistributor transaction = productDistributorService.save(productDistributor1);
-            QRCodeGenerator.generateQRCode(transaction);
+            QRCodeGenerator.supplierSend(transaction);
 
             return ResponseEntity.ok(supToDisMapper.toSupToDisResponse(transaction));
         }
@@ -193,6 +200,19 @@ public class SupplierController {
         }
         List<SupToDisResponse> responseList = supToDisMapper
                 .toSupToDisResponseList(list);
+        return ResponseEntity.ok(responseList);
+    }
+
+    @GetMapping("/products/{supplierId}")
+    public ResponseEntity<List<ProductResponse>> getProductsBySupplierId(@PathVariable Long supplierId) {
+        if (supplierId == null) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<Product> list = productRepository.findAllBySupplier_SupplierId(supplierId);
+        if (list.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<ProductResponse> responseList = productMapper.toProductResponseList(list);
         return ResponseEntity.ok(responseList);
     }
 }

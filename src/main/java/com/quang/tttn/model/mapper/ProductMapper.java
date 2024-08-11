@@ -9,20 +9,37 @@ import java.util.List;
 
 @Component
 public class ProductMapper {
+    private final SupplierMapper supplierMapper;
+
+    public ProductMapper(SupplierMapper supplierMapper) {
+        this.supplierMapper = supplierMapper;
+    }
+
     public ProductResponse toProductResponse(Product product) {
-        return ProductResponse.builder()
-                .productId(product.getProductId())
-                .productName(product.getProductName())
-                .quantity(product.getQuantity())
-                .characteristic(product.getCharacteristic())
-                .seed(product.getSeed())
-                .cook(product.getCook())
-                .note(product.getNote())
-                .image(product.getImage())
-                .plantingDate(product.getPlantingDate())
-                .harvestDate(product.getHarvestDate())
-                .supplierId(product.getSupplier().getSupplierId())
-                .build();
+        ProductResponse productResponse = new ProductResponse();
+        productResponse.setProductId(product.getProductId());
+        productResponse.setProductName(product.getProductName());
+        productResponse.setProductBrand(product.getProductBrand());
+        productResponse.setProductOrigin(product.getProductOrigin());
+        productResponse.setProductCertification(product.getProductCertification());
+        productResponse.setProductWeight(product.getProductWeight());
+        productResponse.setProductCommit(product.getProductCommit());
+        productResponse.setProductPlanting(product.getProductPlanting());
+        productResponse.setQuantity(product.getQuantity());
+        productResponse.setCharacteristic(product.getCharacteristic());
+        productResponse.setSeed(product.getSeed());
+        productResponse.setCook(product.getCook());
+        productResponse.setNote(product.getNote());
+        productResponse.setImage(product.getImage());
+        productResponse.setPlantingDate(product.getPlantingDate());
+        productResponse.setHarvestDate(product.getHarvestDate());
+        productResponse.setSupplierId(product.getSupplier().getSupplierId());
+        productResponse.setSupplier(
+                supplierMapper.toResponse(
+                        product.getSupplier()
+                )
+        );
+        return productResponse;
     }
 
     public List<ProductResponse> toProductResponseList(List<Product> productList) {

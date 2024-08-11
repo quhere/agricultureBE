@@ -12,7 +12,7 @@ import java.util.Optional;
 
 @Repository
 public interface ProductDistributorRepository extends JpaRepository<ProductDistributor, Long> {
-    @Query("SELECT pd FROM ProductDistributor pd WHERE pd.product.productId = :productId AND pd.distributor.distributorId = :distributorId AND pd.status = 'Waiting'")
+    @Query("SELECT pd FROM ProductDistributor pd WHERE pd.product.productId = :productId AND pd.distributor.distributorId = :distributorId AND pd.status = 'pending'")
     ProductDistributor findByProductIdAndDistributorIdAndStatusWaiting(
             @Param("productId") Long productId,
             @Param("distributorId") Long distributorId
@@ -23,5 +23,12 @@ public interface ProductDistributorRepository extends JpaRepository<ProductDistr
     @Query("SELECT pd FROM ProductDistributor pd JOIN pd.product p WHERE p.supplier.supplierId = :supplierId")
     List<ProductDistributor> findAllByProductSupplierId(@Param("supplierId") Long supplierId);
 
+    @Query("SELECT pd FROM ProductDistributor pd " +
+            "WHERE pd.distributor.distributorId = :distributorId")
+    List<ProductDistributor> findAllByDistributorId(@Param("distributorId") Long distributorId);
 
+    @Query("SELECT DISTINCT pd.product.supplier " +
+            "FROM ProductDistributor pd " +
+            "WHERE pd.distributor.distributorId = :distributorId")
+    List<Supplier> findSuppliersByDistributorId(@Param("distributorId") Long distributorId);
 }

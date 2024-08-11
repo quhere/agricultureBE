@@ -1,23 +1,24 @@
 package com.quang.tttn.controller;
 
-import com.quang.tttn.model.Response.DisToSellResponse;
-import com.quang.tttn.model.Response.SellerResponse;
-import com.quang.tttn.model.entity.DistributorSeller;
-import com.quang.tttn.model.entity.DistributorWarehouse;
-import com.quang.tttn.model.entity.Seller;
-import com.quang.tttn.model.entity.SellerWarehouse;
-import com.quang.tttn.model.mapper.DisToSellMapper;
-import com.quang.tttn.model.mapper.SellerMapper;
+import com.google.zxing.WriterException;
+import com.quang.tttn.model.Response.*;
+import com.quang.tttn.model.entity.*;
+import com.quang.tttn.model.mapper.*;
 import com.quang.tttn.model.request.DisToSellRequest;
 import com.quang.tttn.model.request.SellerRequest;
+import com.quang.tttn.repository.DistributorSellerRepository;
+import com.quang.tttn.repository.DistributorWarehouseRepository;
+import com.quang.tttn.repository.SellerWarehouseRepository;
 import com.quang.tttn.service.DistributorSellerService;
 import com.quang.tttn.service.DistributorWarehouseService;
 import com.quang.tttn.service.SellerService;
 import com.quang.tttn.service.SellerWareHouseService;
+import com.quang.tttn.utils.QRCodeGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,6 +40,20 @@ public class SellerController {
     private DisToSellMapper disToSellMapper;
     @Autowired
     private SellerWareHouseService sellerWareHouseService;
+    @Autowired
+    private DistributorSellerRepository distributorSellerRepository;
+    @Autowired
+    private DistributorMapper distributorMapper;
+    @Autowired
+    private DistributorWarehouseMapper distributorWarehouseMapper;
+    @Autowired
+    private DisWarehouseResponse2Mapper disWarehouseResponse2Mapper;
+    @Autowired
+    private DistributorWarehouseRepository distributorWarehouseRepository;
+    @Autowired
+    private SellerWarehouseRepository sellerWarehouseRepository;
+    @Autowired
+    private SellerWarehouseMapper sellerWarehouseMapper;
 
     @GetMapping
     public ResponseEntity<List<SellerResponse>> getAllSellers() {
@@ -66,6 +81,8 @@ public class SellerController {
         seller.setPhoneNumber(request.getPhoneNumber());
         seller.setAddress(request.getAddress());
         seller.setFax(request.getFax());
+        seller.setRole("seller");
+        seller.setAvtUrl("https://gaosachsonghau.com/kcfinder/upload/images/mo-dai-ly-gao.jpg");
 
         return ResponseEntity.ok(
                 sellerMapper.toSellerResponse(
@@ -78,6 +95,13 @@ public class SellerController {
             @RequestBody DisToSellRequest request
     ) {
         DistributorSeller distributorSeller = new DistributorSeller();
+
+        if (request.getWarehouseId() == null) {
+            System.out.println("WarehouseId null");
+        }
+        if (request.getSellerId() == null) {
+            System.out.println("seller null");
+        }
 
         DistributorWarehouse distributorWarehouse = distributorWarehouseService
                 .getDistributorWarehouseById(
@@ -98,7 +122,7 @@ public class SellerController {
         distributorSeller.setSeller(seller);
         distributorSeller.setQuantity(request.getQuantity());
         distributorSeller.setOrderedDate(LocalDateTime.now());
-        distributorSeller.setStatus("waiting");
+        distributorSeller.setStatus("pending");
 
         DistributorSeller savedTransaction = distributorSellerService.save(distributorSeller);
 
@@ -108,7 +132,7 @@ public class SellerController {
     }
 
     @PostMapping("/received/{transactionId}")
-    public ResponseEntity<DisToSellResponse> receive(@PathVariable Long transactionId) {
+    public ResponseEntity<DisToSellResponse> receive(@PathVariable Long transactionId) throws IOException, WriterException {
         DistributorSeller distributorSeller = distributorSellerService.findDistributorSellerById(transactionId);
         if (distributorSeller == null) {
             return ResponseEntity.notFound().build();
@@ -119,10 +143,89 @@ public class SellerController {
 
         SellerWarehouse sellerWarehouse = distributorSeller.getSellerWarehouse();
         sellerWarehouse.setQuantity(distributorSeller.getQuantity());
-        sellerWareHouseService.save(sellerWarehouse);
+        SellerWarehouse savedWarehouse = sellerWareHouseService.save(sellerWarehouse);
 
+        QRCodeGenerator.sellerReceived(savedWarehouse);
         return ResponseEntity.ok(
                 disToSellMapper.toResponse(savedTransaction)
         );
     }
+
+    @GetMapping("/distributor-transactions/{sellerId}")
+    public ResponseEntity<List<DisToSellResponse>> getDistributorTransactions(
+            @PathVariable Long sellerId
+    )
+    {
+        List<DistributorSeller> list = distributorSellerRepository.findAllBySellerId(sellerId);
+        if (list.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<DisToSellResponse> responses = disToSellMapper.toResponseList(list);
+        return ResponseEntity.ok(responses);
+
+    }
+
+    @GetMapping("/distributors/{sellerId}")
+    public ResponseEntity<List<DistributorResponse>> getDistributors(
+            @PathVariable Long sellerId
+    )
+    {
+        List<Distributor> list = distributorSellerRepository.findDistributorsBySellerId(sellerId);
+        if (list.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<DistributorResponse> responses = distributorMapper.toDistributorResponses(list);
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/transaction/{transactionId}")
+    public ResponseEntity<DisToSellResponse> getTransaction(
+            @PathVariable Long transactionId
+    )
+    {
+        DistributorSeller transaction = distributorSellerService.findDistributorSellerById(transactionId);
+        if (transaction == null) {
+            return ResponseEntity.notFound().build();
+        }
+        DisToSellResponse disToSellResponse = disToSellMapper.toResponse(transaction);
+        return ResponseEntity.ok(disToSellResponse);
+    }
+
+    @GetMapping("/get-distributor-warehourses")
+    public ResponseEntity<List<DistributorWarehouseResponse>> getDistributorWarehouses() {
+        List<DistributorWarehouse> list = distributorWarehouseService.getAllDistributorWarehouse();
+        if (list.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        List<DistributorWarehouseResponse> list1 = distributorWarehouseMapper.toResponseList(list);
+        return ResponseEntity.ok(list1);
+    }
+
+    @GetMapping("/get-all-distributor-warehouses")
+    public ResponseEntity<List<DisWarehouseResponse2>> getAllDistributorWarehouses()
+    {
+        List<DistributorWarehouse> list = distributorWarehouseRepository.findAll();
+        if (list.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<DisWarehouseResponse2> list1 = disWarehouseResponse2Mapper.toResponseList(list);
+        return ResponseEntity.ok(list1);
+
+    }
+
+    @GetMapping("/get-seller-warehouses/{sellerId}")
+    public ResponseEntity<List<SellerWarehouseResponse>> getSellerWarehouses(
+            @PathVariable Long sellerId
+    )
+    {
+        List<SellerWarehouse> list = sellerWarehouseRepository.findAllBySeller_SellerId(sellerId);
+        if (list.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        List<SellerWarehouseResponse> responses = sellerWarehouseMapper.toResponseList(list);
+        return ResponseEntity.ok(responses);
+    }
+
 }

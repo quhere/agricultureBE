@@ -12,4 +12,6 @@ public interface DistributorRepository extends JpaRepository<Distributor, Long> 
     Distributor findByName(String name);
     @Query("SELECT DISTINCT d FROM Distributor d JOIN d.productDistributors pd")
     List<Distributor> findAllDistributorsWithProductDistributors();
+
+    Distributor findByEmail(String email);
 }

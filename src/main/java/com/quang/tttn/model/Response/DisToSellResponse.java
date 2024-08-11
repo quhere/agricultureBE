@@ -12,6 +12,7 @@ import java.time.LocalDateTime;
 public class DisToSellResponse {
     private Long id;
     private Long distributorWarehouseId;
+    private DistributorResponse distributor;
     private ProductResponse product;
     private Long sellerId;
     private Long quantity;

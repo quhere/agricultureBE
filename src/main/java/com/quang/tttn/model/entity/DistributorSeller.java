@@ -1,10 +1,7 @@
 package com.quang.tttn.model.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDateTime;
@@ -22,10 +19,12 @@ public class DistributorSeller {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "distributor_warehouse_id", nullable = false)
+    @ToString.Exclude
     private DistributorWarehouse distributorWarehouse;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
+    @ToString.Exclude
     private Seller seller;
 
     @Column(nullable = false)
@@ -45,5 +44,6 @@ public class DistributorSeller {
 
     @OneToOne
     @JoinColumn(name = "seller_warehouse_id", nullable = true)
+    @ToString.Exclude
     private SellerWarehouse sellerWarehouse;
 }

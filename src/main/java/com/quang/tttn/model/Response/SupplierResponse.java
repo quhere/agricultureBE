@@ -14,18 +14,18 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class SupplierResponse {
-
     private Long supplierId;
-
+    private String role;
     private String name;
-
     private String email;
-
     private String phoneNumber;
-
     private String address;
-
     private String fax;
-
     private Boolean status;
+    private String avtUrl;
+    private String taxCode;
+    private String establishment;
+    private String manager;
+    private String activated;
+    private String description;
 }

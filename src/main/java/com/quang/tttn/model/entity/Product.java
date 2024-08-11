@@ -25,15 +25,33 @@ public class Product {
     private String productName;
 
     @Column
-    private Long quantity;
+    private String productBrand;
+
+    @Column(columnDefinition = "TEXT")
+    private String productOrigin;
+
+    @Column(columnDefinition = "TEXT")
+    private String productCertification;
 
     @Column
+    private String productWeight;
+
+    @Column(columnDefinition = "TEXT")
+    private String productCommit;
+
+    @Column(columnDefinition = "TEXT")
+    private String productPlanting;
+
+    @Column
+    private Long quantity;
+
+    @Column(columnDefinition = "TEXT")
     private String characteristic;
 
     @Column
     private String seed;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String cook;
 
     @Column(columnDefinition = "TEXT")

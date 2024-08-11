@@ -10,14 +10,26 @@ import java.util.List;
 @Component
 public class SupplierMapper {
     public SupplierResponse toResponse(Supplier supplier) {
-        return SupplierResponse.builder()
-                .supplierId(supplier.getSupplierId())
-                .name(supplier.getName())
-                .email(supplier.getEmail())
-                .phoneNumber(supplier.getPhoneNumber())
-                .address(supplier.getAddress())
-                .fax(supplier.getFax())
-                .build();
+        if (supplier == null) {
+            return null;
+        }
+
+        return new SupplierResponse(
+                supplier.getSupplierId(),
+                supplier.getRole(),
+                supplier.getName(),
+                supplier.getEmail(),
+                supplier.getPhoneNumber(),
+                supplier.getAddress(),
+                supplier.getFax(),
+                supplier.getStatus(),
+                supplier.getAvtUrl(),
+                supplier.getTaxCode(),
+                supplier.getEstablishment(),
+                supplier.getManager(),
+                supplier.getActivated(),
+                supplier.getDescription()
+        );
     }
 
     public List<SupplierResponse> toResponseList(List<Supplier> suppliers) {

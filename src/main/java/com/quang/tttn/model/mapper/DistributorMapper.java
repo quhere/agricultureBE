@@ -17,6 +17,14 @@ public class DistributorMapper {
         distributorResponse.setAddress(distributor.getAddress());
         distributorResponse.setPhoneNumber(distributor.getPhoneNumber());
         distributorResponse.setFax(distributor.getFax());
+        distributorResponse.setAvtUrl(distributor.getAvtUrl());
+        distributorResponse.setStatus(distributor.getStatus());
+        distributorResponse.setRole(distributor.getRole());
+        distributorResponse.setTaxCode(distributor.getTaxCode());
+        distributorResponse.setEstablishment(distributor.getEstablishment());
+        distributorResponse.setManager(distributor.getManager());
+        distributorResponse.setActivated(distributor.getActivated());
+        distributorResponse.setDescription(distributor.getDescription());
         return distributorResponse;
     }
 

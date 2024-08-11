@@ -17,6 +17,14 @@ public class SellerMapper {
         sellerResponse.setPhoneNumber(seller.getPhoneNumber());
         sellerResponse.setAddress(seller.getAddress());
         sellerResponse.setFax(seller.getFax());
+        sellerResponse.setAvtUrl(seller.getAvtUrl());
+        sellerResponse.setStatus(seller.getStatus());
+        sellerResponse.setRole(seller.getRole());
+        sellerResponse.setTaxCode(seller.getTaxCode());
+        sellerResponse.setEstablishment(seller.getEstablishment());
+        sellerResponse.setManager(seller.getManager());
+        sellerResponse.setActivated(seller.getActivated());
+        sellerResponse.setDescription(seller.getDescription());
         return sellerResponse;
     }
 

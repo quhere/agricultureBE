@@ -17,6 +17,11 @@ public class DisToSellMapper {
     private ProductMapper productMapper;
     @Autowired
     private ProductDistributorService productDistributorService;
+    @Autowired
+    private DisWarehouseResponse2Mapper disWarehouseResponse2Mapper;
+    @Autowired
+    private DistributorMapper distributorMapper;
+
     public DisToSellResponse toResponse(DistributorSeller distributorSeller) {
         ProductDistributor productDistributor = productDistributorService.findByDistributorWarehouseId(
                 distributorSeller.getDistributorWarehouse().getWarehouseId()
@@ -27,11 +32,21 @@ public class DisToSellMapper {
         response.setDistributorWarehouseId(
                 distributorSeller.getDistributorWarehouse().getWarehouseId()
         );
-        response.setProduct(
-                productMapper.toProductResponse(
-                        productDistributor.getProduct()
+
+        response.setDistributor(
+                distributorMapper.toDistributorResponse(
+                        distributorSeller.getDistributorWarehouse().getDistributor()
                 )
         );
+
+        if (productDistributor !=null) {
+            response.setProduct(
+                    productMapper.toProductResponse(
+                            productDistributor.getProduct()
+                    )
+            );
+        }
+
         response.setSellerId(distributorSeller.getSeller().getSellerId());
         response.setQuantity(distributorSeller.getQuantity());
         response.setOrderedDate(distributorSeller.getOrderedDate());
